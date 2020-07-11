@@ -13,3 +13,4 @@ wget -nc $geo_state_url -O data/geo/us-states.json
 
 python3 get-state-name-mapping.py
 python3 get-county-data.py
+python3 get-pop-data.py

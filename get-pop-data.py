@@ -1,3 +1,4 @@
+import requests
 
 import numpy as np
 import pandas as pd
@@ -35,8 +36,17 @@ fips['fips'] = fips.fips.astype(int)
 # get land area data
 # https://www.census.gov/library/publications/2011/compendia/usa-counties-2011.html
 print('Downloading US Census land area survey...')
-land = pd.read_excel('https://www2.census.gov/library/publications/'
-                     '2011/compendia/usa-counties/excel/LND01.xls')
+url = 'https://www2.census.gov/library/publications/2011/compendia/usa-counties/excel/LND01.xls'
+headers = {
+    "User-Agent":
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/50.0.2661.75 Safari/537.36",
+    "X-Requested-With": "XMLHttpRequest"
+}
+r = requests.get(url, headers=headers)
+land = pd.read_excel(r.content)
+#land = pd.read_excel('https://www2.census.gov/library/publications/'
+#                     '2011/compendia/usa-counties/excel/LND01.xls')
 land = pd.DataFrame(dict(fips=land.STCOU, land_area=land.LND010190D))
 
 
