@@ -6,37 +6,14 @@ import pandas as pd
 def get_state_data(pop, state_name_mapping):
     print('Downloading state-level data from covidtracking.com ...')
 
-    x = pd.read_html('https://docs.google.com/spreadsheets/u/2/d/e/'
-                     '2PACX-1vRwAqp96T9sYYq2-i7Tj0pvTf6XVHjDSMIKBdZHXiCGGdNC0ypEU9NbngS8mxea55JuCFuua1MUeOj5'
-                     '/pubhtml', skiprows=1, index_col=0)
-    states = x[3][[
-        'Date',
-        'State',
-        'Positive',
-        'Negative',
-        'Pending',
-        'Recovered',
-        'Deaths',
-        'Data Quality Grade',
-    ]]
-    states = states[~states.Date.isna()]
-    states = states.sort_values('Date State'.split(), ascending=True).reset_index(drop=True)
-    states['Date'] = pd.to_datetime(states.Date.astype(str), format='%Y%m%d')
-    states['datestr'] = states['Date'].astype(str)
-    states['days'] = states.Date.map({d:i for (i,d) in enumerate(np.unique(states.Date.values))})
+    x = pd.read_csv('https://covidtracking.com/data/download/all-states-history.csv', parse_dates=['date'])
+    data = x['date state death positive negative recovered dataQualityGrade'.split()]
+    data = data[~data.date.isna()]
+    data = data.sort_values('date state'.split(), ascending=True).reset_index(drop=True)
+    data['datestr'] = data['date'].astype(str)
+    data['days'] = data.date.map({d:i for (i,d) in enumerate(np.unique(data.date.values))})
 
-    # reorder and rename columns
-    data = states[[
-        'Date',
-        'State',
-        'Deaths',
-        'Positive',
-        'Negative',
-        'Recovered',
-        'Data Quality Grade',
-        'datestr',
-        'days',
-    ]]
+    # rename columns
     data.columns = [
         'date',
         'state',
